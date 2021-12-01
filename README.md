@@ -1,9 +1,8 @@
-# Fabric Example Mod
+# Snowy Trees
+Temporary fork of
+[SnowUnderTrees](https://github.com/DeadlyMC/snow-under-trees-fabric) for 1.18.
+Original license (MIT) included as LICENSE.original.
 
-## Setup
-
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+## Setup and build
+- Clone this repo.
+- Run `./gradlew build` to build (result in `build/libs/`)

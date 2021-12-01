@@ -1,29 +1,31 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "snowytrees",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Snowy Trees",
+  "description": "Adds snow under trees in snowy biomes.",
   "authors": [
-    "Me!"
+    "DeadlyMC",
+    "bl4ckscor3",
+    "kota"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://git.sr.ht/~kota/snowy-trees",
+    "sources": "https://git.sr.ht/~kota/snowy-trees"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "MIT",
+  "icon": "assets/snowytrees/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "nz.kota.snowy-trees.SnowyTrees"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "snowytrees.mixins.json"
   ],
 
   "depends": {
