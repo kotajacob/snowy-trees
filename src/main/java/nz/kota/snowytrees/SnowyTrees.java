@@ -1,48 +1,50 @@
 package nz.kota.snowytrees;
 
+import java.util.List;
+
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.decorator.BiomePlacementModifier;
-import net.minecraft.world.gen.feature.*;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.minecraft.world.gen.GenerationStep;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.FeatureConfig;
+import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.placementmodifier.BiomePlacementModifier;
 
 public class SnowyTrees implements ModInitializer {
-	private static final Feature<DefaultFeatureConfig> SNOWY_TREES_FEATURE = new SnowUnderTreeFeature(DefaultFeatureConfig.CODEC);
-	public static final ConfiguredFeature<?, ?> SNOWY_TREES_CONFIGURED = SNOWY_TREES_FEATURE.configure(FeatureConfig.DEFAULT);
+	private static final Feature<DefaultFeatureConfig> SNOWY_TREES = new SnowUnderTreeFeature(DefaultFeatureConfig.CODEC);
 
-	private static List<Identifier> biomesToAddTo = new ArrayList<>();
+	public static ConfiguredFeature<?, ?> SNOWY_TREES_CONFIGURED = new ConfiguredFeature<>(SNOWY_TREES,
+			FeatureConfig.DEFAULT);
+
+	public static PlacedFeature SNOWY_TREES_PLACED = new PlacedFeature(RegistryEntry.of(SNOWY_TREES_CONFIGURED),
+			List.of(BiomePlacementModifier.of()));
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registry.FEATURE, new Identifier("kota", "snowytrees"), SNOWY_TREES_FEATURE);
+		Registry.register(Registry.FEATURE, new Identifier("kota", "snowytrees"), SNOWY_TREES);
 
-		RegistryKey<ConfiguredFeature<?, ?>> snowyTrees = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY, new Identifier("kota", "snowytrees"));
-		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, snowyTrees.getValue(), SNOWY_TREES_CONFIGURED);
+		Registry<ConfiguredFeature<?, ?>> registry = BuiltinRegistries.CONFIGURED_FEATURE;
+		RegistryKey<ConfiguredFeature<?, ?>> snowyTrees = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY,
+				new Identifier("kota", "snowytrees"));
+		Registry.register(registry, snowyTrees.getValue(), SNOWY_TREES_CONFIGURED);
 
-		PlacedFeature SNOWY_TREES_PLACED_FEATURE = SNOWY_TREES_CONFIGURED.withPlacement(BiomePlacementModifier.of());
-		RegistryKey<PlacedFeature> snowyTreesPlaced = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("kota", "snowytrees"));
-		Registry.register(BuiltinRegistries.PLACED_FEATURE, snowyTrees.getValue(), SNOWY_TREES_PLACED_FEATURE);
+		Registry<PlacedFeature> placedRegistry = BuiltinRegistries.PLACED_FEATURE;
+		Registry.register(placedRegistry, snowyTrees.getValue(), SNOWY_TREES_PLACED);
 
-		BiomeModifications.addFeature(b -> shouldAddSnow(b.getBiome()), GenerationStep.Feature.TOP_LAYER_MODIFICATION, snowyTreesPlaced);
+		BiomeModifications.addFeature(b -> shouldAddSnow(b.getBiome()), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
+				BuiltinRegistries.PLACED_FEATURE.getKey(SNOWY_TREES_PLACED).get());
+
 	}
 
 	private boolean shouldAddSnow(Biome biome) {
 		return biome.getPrecipitation() == Biome.Precipitation.SNOW;
 	}
-
-	public static void addSnowUnderTrees(Biome biome) {
-		Identifier id = BuiltinRegistries.BIOME.getId(biome);
-		if (!biomesToAddTo.contains(id))
-			biomesToAddTo.add(id);
-	}
-
 }
